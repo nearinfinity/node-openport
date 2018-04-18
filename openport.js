@@ -12,20 +12,13 @@ var available = function (options, callback) {
   var server = net.createServer();
   var callbackCalled = false;
 
-  server.on('error', function () {
-    if (!callbackCalled) {
-      callbackCalled = true;
-      callback(null, false);
-    }
+  server.once('error', function () {
+    callback(null, false);
   });
+  
   server.listen(options, function () {
     server.close(function() {
-      process.nextTick(function() {
-        if (!callbackCalled) {
-          callbackCalled = true;
-          callback(null, numPort);
-        }
-      });
+      callback(null, numPort);
     });
   });
 };
